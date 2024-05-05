@@ -1,6 +1,5 @@
 # Project place file
-/RobloxLua-Template.rbxlx
-
-# Roblox Studio lock files
-/*.rbxlx.lock
-/*.rbxl.lock
+/*.rbxlx
+/*.lock
+/out
+/Packages
