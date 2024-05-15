@@ -1,24 +1,29 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
-local Example: () -> (Instance, () -> ()) = require(StarterPlayer.StarterPlayerScripts.Client.ui.components.Example)
-local Leaderboard = require(StarterPlayer.StarterPlayerScripts.Client.ui.components.Leaderboard)
+local Example = require(StarterPlayer.StarterPlayerScripts.Client.ui.components.Example)
 local Fusion = require(ReplicatedStorage.Packages.Fusion)
 
-local COMPONENTS = {Example, Leaderboard} :: {() -> (Instance | nil, () -> nil)}
+local displayComponents = Fusion.Value({
+	Example,
+} :: {() -> Instance | () -> nil})
 
 return function(target: Instance)
-	return Fusion.ForValues(COMPONENTS, function(v)
-		local instance, clean = v()
+	return Fusion.ForValues(displayComponents, function(v)
+		local result = v()
 
-		if instance then
-			Fusion.Hydrate(instance) {
-				Parent = instance:IsA("ScreenGui") and target or instance.Parent,
+		if typeof(result) == "Instance" then
+			Fusion.Hydrate(result) {
+				Parent = result:IsA("ScreenGui") and target or result.Parent,
 				Name = getfenv(v).script.Name
 			}
 		end
 		
-		return clean
-	end, function(v)
-		return v()
+		return result
+	end, function(result)
+		if typeof(result) == "Instance" then 
+			result:Destroy()
+		else
+			result()
+		end
 	end)
 end

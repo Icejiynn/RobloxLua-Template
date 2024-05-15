@@ -15,7 +15,7 @@ local KEY_TEMPLATE = `%d_Data`
 local PROFILES: { [Player]: typeof(PROFILE_STORE:LoadProfileAsync("")) } = {}
 
 if RunService:IsStudio() then
-	-- PROFILE_STORE = PROFILE_STORE.Mock
+	PROFILE_STORE = PROFILE_STORE.Mock
 end
 
 local DataService = {}
@@ -32,6 +32,10 @@ end
 
 ---@private
 function DataService.createProfile(plr: Player)
+	if (typeof(plr) ~= "Instance") then
+		return
+	end
+
 	local user = plr.UserId
 
 	return Promise.new(function(resolve, reject)

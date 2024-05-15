@@ -14,9 +14,9 @@ export type State = {
 	[string]: DataConstants.PlayerStats,
 }
 
-local initialState: State = {}
+local INITIAL_STATE: State = {}
 
-local statsSlice = Reflex.createProducer(initialState, {
+return Reflex.createProducer(INITIAL_STATE, {
 	loadPlayerData = function(state: State, user: string, data: DataConstants.PlayerData)
 		local newState = {}
 		for i, v in state do
@@ -70,5 +70,3 @@ local statsSlice = Reflex.createProducer(initialState, {
 		return newState
 	end,
 })
-
-return statsSlice

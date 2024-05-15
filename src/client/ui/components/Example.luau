@@ -63,7 +63,5 @@ return function ()
 		end
 	end
 
-	return screenGui, function ()
-		screenGui:Destroy()
-	end
+	return screenGui
 end

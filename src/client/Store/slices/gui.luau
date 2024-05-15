@@ -12,7 +12,7 @@ export type State = {
 }
 
 local initialState: State = {
-	page = nil
+	page = "landing"
 }
 
 local guiSlice = Reflex.createProducer(initialState, {

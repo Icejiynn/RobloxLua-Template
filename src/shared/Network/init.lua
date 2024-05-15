@@ -1,6 +1,11 @@
 local data = require(script.data)
+local match = require(script.match)
+local notification = require(script.notification)
 local reflex = require(script.reflex)
+
 return {
-	Data = data,
+	data = data,
 	reflex = reflex,
+	notification = notification,
+	match = match,
 }

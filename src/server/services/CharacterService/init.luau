@@ -1,9 +1,11 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 local CharacterUtil = require(ReplicatedStorage.Shared.util.CharacterUtil)
 local Class = require(script.Class)
 
 local REGEN_HEALTH = 1
+local RESPAWN_TIME = Players.RespawnTime
 
 local CharacterService = {}
 
@@ -35,16 +37,25 @@ function CharacterService:start()
 end
 
 function CharacterService._addCharacter(model: Model)
-	local newInstance = Class.new({
-		model = model,
-	})
+	CharacterUtil.promiseLoaded(model):andThen(function()
+		local newInstance = Class.new({
+			model = model,
+		})
+	
+		CharacterService.__list[model] = newInstance
+		newInstance.trove:AddPromise(CharacterUtil.promiseDestroyed(model):andThen(function()
+			CharacterService._removeCharacter(model)
+		end))
 
-	CharacterService.__list[model] = newInstance
-	newInstance.trove:AddPromise(CharacterUtil.promiseDestroyed(model):andThen(function()
-		CharacterService._removeCharacter(model)
-	end))
-
-	newInstance:damage(50)
+		newInstance.trove:Add(model.hu)
+	
+		newInstance:damage(50)
+	end):catch(function()
+		if model then
+			model:Destroy()
+		end
+		warn("Character did not load!")
+	end)
 end
 
 function CharacterService._removeCharacter(model: Model)

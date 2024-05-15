@@ -5,12 +5,14 @@ local useButtonState = require(script.Parent.useButtonState)
 type Properties = {
 	Button: Instance,
 	HoverScale: number | nil,
-	ClickScale: number | nil
+	ClickScale: number | nil,
+	Dampening: number?
 }
 
 return function (props: Properties)
-	props.HoverScale = 1.2
-	props.ClickScale = 0.9
+	if not props.HoverScale then props.HoverScale = 1.2 end
+	if not props.ClickScale then props.ClickScale = 0.9 end
+	if not props.Dampening then props.Dampening = 0.35 end
 	
 	local hover,click,event = useButtonState()
 
@@ -25,7 +27,7 @@ return function (props: Properties)
 					return if click:get() then props.ClickScale 
 							else if hover:get() then props.HoverScale 
 							else 1
-				end), 30, 0.35)
+				end), 30, props.Dampening)
 			}
 		}
 	}

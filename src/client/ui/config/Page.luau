@@ -1,5 +1,3 @@
-export type Pages = nil | "stats"
+export type Pages = "landing"
 
-local Page = {}
-
-return Page
+return {}

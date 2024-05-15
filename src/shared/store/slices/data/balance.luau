@@ -14,7 +14,7 @@ export type State = {
 
 local initialState: State = {}
 
-local balanceSlice = Reflex.createProducer(initialState, {
+return Reflex.createProducer(initialState, {
 	loadPlayerData = function(state: State, user: string, data: DataConstants.PlayerData)
 		local newState = {}
 		for i, v in state do
@@ -49,5 +49,3 @@ local balanceSlice = Reflex.createProducer(initialState, {
 		return newState
 	end
 })
-
-return balanceSlice
