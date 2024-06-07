@@ -1,13 +1,10 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local data = require(ReplicatedStorage.Shared.store.slices.data)
+local data = require(script.slices.data)
 
 export type State = {
 	data: data.State
 }
 export type Actions = data.Actions
 
-local slices = {
+return {
 	data = data,
 }
-
-return { slices = slices }

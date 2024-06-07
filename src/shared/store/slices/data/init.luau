@@ -1,16 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local balance = require(script.balance)
+local inventory = require(script.inventory)
 local stats = require(script.stats)
 local Reflex = require(ReplicatedStorage.Packages.Reflex)
 
 export type State = {
-	balance: balance.State,
+	inventory: inventory.State,
 	stats: stats.State
 }
-export type Actions = balance.Actions & stats.Actions
+export type Actions = inventory.Actions & stats.Actions
 
 local dataSlice = Reflex.combineProducers({
-	balance = balance,
+	inventory = inventory,
 	stats = stats,
 })
 

@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Red = require(ReplicatedStorage.Packages.Red)
 local t = require(ReplicatedStorage.Packages.t)
 
-return Red.Function("FetchLeaderboard", function()
+return Red.Function("fetchLeaderboard", function()
 	return
 end, function(arg1)
 	assert(

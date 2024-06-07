@@ -4,12 +4,12 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 local Promise = require(ReplicatedStorage.Packages.Promise)
 local ProfileService = require(ReplicatedStorage.Packages.ProfileService)
-local DataConstants = require(ReplicatedStorage.Shared.constants.DataConstants)
+local Data = require(ReplicatedStorage.Shared.Constants.Data)
 local Store = require(ServerScriptService.Server.Store)
 
 local PROFILE_STORE = ProfileService.GetProfileStore(
-	if RunService:IsStudio() then "Testing" else "Production",
-	DataConstants.DataTemplate
+	`Data/{if RunService:IsStudio() then "Testing" else "Main"}`,
+	Data.TEMPLATE
 )
 local KEY_TEMPLATE = `%d_Data`
 local PROFILES: { [Player]: typeof(PROFILE_STORE:LoadProfileAsync("")) } = {}
@@ -20,18 +20,15 @@ end
 
 local DataService = {}
 
-function DataService:start()
+function DataService:OnStart()
 	for _, plr in Players:GetPlayers() do
-		task.spawn(function()
-			DataService.createProfile(plr)
-		end)
+		DataService.__createProfile(plr)
 	end
-	Players.PlayerAdded:Connect(DataService.createProfile)
+	Players.PlayerAdded:Connect(DataService.__createProfile)
 	Players.PlayerRemoving:Connect(DataService.removeProfile)
 end
 
----@private
-function DataService.createProfile(plr: Player)
+function DataService.__createProfile(plr: Player)
 	if (typeof(plr) ~= "Instance") then
 		return
 	end
@@ -65,13 +62,22 @@ function DataService.createProfile(plr: Player)
 		end)
 end
 
----@private
-function DataService.removeProfile(plr: Player)
+function DataService.removeProfile(plr: Player, teleporting: Promise.Promise?)
 	Store.closePlayerData(tostring(plr.UserId))
 	local profile = PROFILES[plr]
+
 	if profile then
 		profile:Release()
 		PROFILES[plr] = nil
+
+		if teleporting then
+			profile:ListenToHopReady(function()
+				teleporting:await()
+			end)
+			teleporting:catch(function()
+				DataService.__createProfile(plr);
+			end)
+		end
 	end
 end
 

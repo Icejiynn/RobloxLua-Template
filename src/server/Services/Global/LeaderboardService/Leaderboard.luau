@@ -31,6 +31,7 @@ function Leaderboard.new(props: Properties)
 			end)
 		end
 
+		-- Initial fetch
 		Promise.retry(function(...)  
 			return fetch()
 		end, 5, 10):finally(function()

@@ -1,21 +1,18 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local reciever = require(script.reciever)
+local reciever = require(script.middleware.reciever)
 local gui = require(script.slices.gui)
 local Reflex = require(ReplicatedStorage.Packages.Reflex)
-local sharedStore = require(ReplicatedStorage.Shared.store)
+local Store = require(ReplicatedStorage.Shared.Store)
 
-export type State = sharedStore.State & {
+export type State = Store.State & {
 	gui: gui.State
 }
-export type Actions = sharedStore.Actions & gui.Actions
+export type Actions = Store.Actions & gui.Actions
 
-local slices = {} :: typeof(sharedStore.slices)
-for i, v in sharedStore.slices do
-	slices[i] = v
-end
+local slices = table.clone(Store)
+slices.gui = gui
 
-local store = Reflex.combineProducers(slices) :: Reflex.Producer<State, Actions>
+local STORE = Reflex.combineProducers(slices) :: Reflex.Producer<State, Actions>
+STORE:applyMiddleware(reciever.middleware)
 
-store:applyMiddleware(reciever.middleware)
-
-return store
+return STORE

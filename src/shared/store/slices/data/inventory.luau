@@ -1,27 +1,28 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Reflex = require(ReplicatedStorage.Packages.Reflex)
-local DataConstants = require(ReplicatedStorage.Shared.constants.DataConstants)
+local Data = require(ReplicatedStorage.Shared.Constants.Data)
+local Inventory = require(ReplicatedStorage.Shared.Constants.Data.Inventory)
 
 export type Actions = {
-	loadPlayerData: (user: string, data: DataConstants.PlayerData) -> State,
+	loadPlayerData: (user: string, data: Data.PlayerData) -> State,
 	closePlayerData: (user: string) -> State,
-	incrementPlayerBalance: (user: string, key: DataConstants.Currency, amm: number) -> State,
+	incrementPlayerInventory: (user: string, key: Inventory.Item, amm: number) -> State,
 }
 
 export type State = {
-	[string]: DataConstants.PlayerBalance,
+	[string]: Inventory.Structure,
 }
 
 local initialState: State = {}
 
 return Reflex.createProducer(initialState, {
-	loadPlayerData = function(state: State, user: string, data: DataConstants.PlayerData)
+	loadPlayerData = function(state: State, user: string, data: Data.PlayerData)
 		local newState = {}
 		for i, v in state do
 			newState[i] = v
 		end
 
-		newState[user] = data.balance
+		newState[user] = data.inventory
 
 		return newState
 	end,
@@ -37,7 +38,7 @@ return Reflex.createProducer(initialState, {
 		return newState
 	end,
 
-	incrementPlayerBalance =  function(state: State, user: string, key: DataConstants.Currency, amm: number)
+	incrementPlayerInventory =  function(state: State, user: string, key: Data.Currency, amm: number)
 		local newState = {}
 		for i, data in state do
 			if i == user then

@@ -1,6 +1,3 @@
-local PlaceIDs = {
-	Match = 16586808164,
-	Lobby = 1,
-}
+local PlaceIDs = {}
 
 return PlaceIDs

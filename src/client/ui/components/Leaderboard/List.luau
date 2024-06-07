@@ -14,7 +14,7 @@ return function(props: Properties)
 	local template = props.Instance.main.list.scroll.template :: Frame
 	template.Visible = false
 
-	Fusion.Hydrate(template.Parent :: ScrollingFrame) {
+	return Fusion.Hydrate(template.Parent :: ScrollingFrame) {
 		[Fusion.Children] = Fusion.ForPairs(props.Data, function(index, data)
 			local info, infoDisconnect = useAsync(function()  
 				return UserService:GetUserInfosByUserIdsAsync({tonumber(data.key)})[1]

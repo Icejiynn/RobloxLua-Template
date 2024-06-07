@@ -4,6 +4,8 @@ local Fusion = require(ReplicatedStorage.Packages.Fusion)
 return function (props: {[{} | unknown]: unknown})
 	local properties = {
 		IgnoreGuiInset = true,
+		ResetOnSpawn = true,
+		DisplayOrder = 10,
 	}
 	for i,v in props do
 		properties[i] = v

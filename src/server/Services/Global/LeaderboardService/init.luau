@@ -1,21 +1,21 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local Leaderboard = require(script.Leaderboard)
 local Trove = require(ReplicatedStorage.Packages.Trove)
 local Store = require(ServerScriptService.Server.Store)
-local Class = require(ServerScriptService.Server.services.LeaderboardService.Class)
 local Network = require(ReplicatedStorage.Shared.Network)
-local PlayerUtil = require(ReplicatedStorage.Shared.util.PlayerUtil)
+local PlayerUtil = require(ReplicatedStorage.Shared.Util.PlayerUtil)
 
 local LeaderboardService = {}
 
-LeaderboardService.__list = {} :: {[string]: typeof(Class.new({
+LeaderboardService.__list = {} :: {[string]: typeof(Leaderboard.new({
 	name = "",
 	trackingAmount = 0,
 }))}
 
 function LeaderboardService:start()
-	Network.Data.FetchLeaderboard:SetCallback(function(Player: Player)
+	Network.data.fetchLeaderboard:SetCallback(function(Player: Player)
 		local data = {}
 		for i,v in LeaderboardService.__list do
 			data[i] = v.cache 
@@ -55,8 +55,8 @@ function LeaderboardService.createTracker(plr: Player)
 	end)
 
 	trove:Add(Store:subscribe(function(state: Store.State)
-		local balances = state.data.balance[user]
-		return balances and balances["coins"] :: number
+		local inventorys = state.data.inventory[user]
+		return inventorys and inventorys["coins"] :: number
 	end, function(new: number, old: number)
 		if (new and (if old then new > old else true)) then
 			LeaderboardService.__list.Coins:post(user, new)
@@ -68,9 +68,9 @@ function LeaderboardService.createTracker(plr: Player)
 	end)
 end
 
-function LeaderboardService.createLeaderboard(props: Class.Properties)
-	local class = Class.new(props)
-	LeaderboardService.__list[props.name] = class
+function LeaderboardService.createLeaderboard(props: Leaderboard.Properties)
+	local Leaderboard = Leaderboard.new(props)
+	LeaderboardService.__list[props.name] = Leaderboard
 end
 
 return LeaderboardService

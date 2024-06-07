@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer")
-local Example = require(StarterPlayer.StarterPlayerScripts.Client.ui.components.Example)
+local Example = require(script.Parent.components.Example)
 local Fusion = require(ReplicatedStorage.Packages.Fusion)
 
 local displayComponents = Fusion.Value({

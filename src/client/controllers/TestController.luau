@@ -3,7 +3,7 @@ local Network = require(ReplicatedStorage.Shared.Network)
 local Test = {}
 
 function Test:start()
-	local z, a = Network.Data.FetchLeaderboard:Call():Await()
+	local z, a = Network.Data.fetchLeaderboard:Call():Await()
 	print(z,a)
 end
 

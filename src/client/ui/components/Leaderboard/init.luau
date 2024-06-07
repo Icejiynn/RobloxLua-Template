@@ -1,48 +1,41 @@
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
+local UIComponent = require(StarterPlayer.StarterPlayerScripts.Client.UI.components.ui.UIComponent)
+local useAsync = require(StarterPlayer.StarterPlayerScripts.Client.UI.hooks.useAsync)
 local List = require(script.List)
 local Fusion = require(ReplicatedStorage.Packages.Fusion)
 local Network = require(ReplicatedStorage.Shared.Network)
-local useAsync = require(StarterPlayer.StarterPlayerScripts.Client.ui.hooks.useAsync)
 
-type SurfaceGui = typeof(workspace.Leaderboards.leaderboard.SurfaceGui)
-
-local LEADERBOARD_FOLDER = workspace:WaitForChild("Leaderboards")
-
-return function()
-	local fetch = Fusion.Value(false)
+return UIComponent(function(component)
+	local lastFetch = Fusion.Value(0)
 	local value = useAsync(function()
-		return (select(2, Network.Data.FetchLeaderboard:Call():Await()) :: unknown) :: {
+		return (select(2, Network.data.fetchLeaderboard:Call():Await()) :: unknown) :: {
 			[string]: {{
 				key: string,
 				value: number
 			}}
 		}
-	end, {fetch})
+	end, {lastFetch})
 
-	local thread = task.spawn(function()
+	component.trove:Add(task.spawn(function()
 		while true do
 			task.wait(60)
-			fetch:set(not fetch:get())
+			lastFetch:set(tick())
 		end
-	end)
+	end))
 
 	local function makeList(v: Instance)
-		List({
+		component.trove:Add(List({
 			Instance = v:FindFirstChildOfClass("SurfaceGui"),
 			Data = Fusion.Computed(function()
 				local data = value:get()  
 				return if data then data[v.Name] else nil
 			end)
-		})
+		}))
 	end
 
-	for _, v in LEADERBOARD_FOLDER:GetChildren() do
+	for _, v in CollectionService:GetTagged("leaderboard") do
 		makeList(v)
 	end
-	LEADERBOARD_FOLDER.ChildAdded:Connect(makeList)
-
-	return nil, function()
-		task.cancel(thread)
-	end
-end
+end)

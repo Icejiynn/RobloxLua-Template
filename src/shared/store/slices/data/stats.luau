@@ -1,23 +1,23 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Reflex = require(ReplicatedStorage.Packages.Reflex)
-local DataConstants = require(ReplicatedStorage.Shared.constants.DataConstants)
-local StatConstants = require(ReplicatedStorage.Shared.constants.StatConstants)
+local Data = require(ReplicatedStorage.Shared.Constants.Data)
+local Stats = require(ReplicatedStorage.Shared.Constants.Data.Stats)
 
 export type Actions = {
-	loadPlayerData: (user: string, data: DataConstants.PlayerData) -> State,
+	loadPlayerData: (user: string, data: Data.PlayerData) -> State,
 	closePlayerData: (user: string) -> State,
-	incrementPlayerStat: (user: string, key: StatConstants.Stat) -> State,
+	incrementPlayerStat: (user: string, key: Stats.Structure) -> State,
 	resetPlayerStats: (user: string) -> State,
 }
 
 export type State = {
-	[string]: DataConstants.PlayerStats,
+	[string]: Stats.Structure,
 }
 
 local INITIAL_STATE: State = {}
 
 return Reflex.createProducer(INITIAL_STATE, {
-	loadPlayerData = function(state: State, user: string, data: DataConstants.PlayerData)
+	loadPlayerData = function(state: State, user: string, data: Data.PlayerData)
 		local newState = {}
 		for i, v in state do
 			newState[i] = v
@@ -39,7 +39,7 @@ return Reflex.createProducer(INITIAL_STATE, {
 		return newState
 	end,
 
-	incrementPlayerStat =  function(state: State, user: string, key: StatConstants.Stat)
+	incrementPlayerStat =  function(state: State, user: string, key: Stats.Stat)
 		local newState = {}
 		for i, data in state do
 			if i == user then
@@ -50,7 +50,7 @@ return Reflex.createProducer(INITIAL_STATE, {
 
 		return newState
 	end,
-	resetPlayerStats =  function(state: State, user: string, key: StatConstants.Stat)
+	resetPlayerStats =  function(state: State, user: string, key: Stats.Stat)
 		local newState = {}
 		for i, data in state do
 			if i == user then
